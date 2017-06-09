@@ -2,20 +2,8 @@ import com.google.gson.Gson
 import java.net.URL
 
 fun main(args: Array<String>) {
-    var amount = 0
-
-    do {
-        print("How many fortune cookies do you want? [1-5] ")
-
-        try {
-            amount = readLine()!!.trim().toInt()
-        } catch (e: NumberFormatException) {
-            continue
-        }
-    } while (amount < 1 || amount > 5)
-
     val fortuneCookies = Gson().fromJson(
-            URL("http://fortunecookieapi.herokuapp.com/v1/cookie?limit=$amount").readText(),
+            URL("http://fortunecookieapi.herokuapp.com/v1/cookie?limit=${getInput()}").readText(),
             Array<FortuneCookie>::class.java
     )
 
@@ -24,5 +12,17 @@ fun main(args: Array<String>) {
         println(fortune)
         println(lesson)
         println(lotto)
+    }
+}
+
+fun getInput(): Int {
+    print("How many fortune cookies do you want? [1-5] ")
+
+    return try {
+        val amount = readLine()!!.trim().toInt()
+
+        if (amount < 1 || amount > 5) throw Exception() else amount
+    } catch (e: Exception) {
+        getInput()
     }
 }
